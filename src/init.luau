@@ -7,6 +7,7 @@ local SINGLETONS = {
 	require("@self/singletons/database"),
 	require("@self/singletons/commands"),
 	require("@self/singletons/connectionStats"),
+	require("@self/singletons/presence"),
 	require("@self/singletons/wordReactor"),
 	require("@self/singletons/autoResponder"),
 	require("@self/singletons/staleThreadBumper"),
