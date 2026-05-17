@@ -25,6 +25,9 @@ RUN curl -fsSL "https://github.com/pesde-pkg/pesde/releases/download/v0.7.3%2Bre
 
 RUN zune setup
 
+RUN git config --global user.email "docker@build" && \
+    git config --global user.name "Docker"
+
 WORKDIR /app
 
 COPY .luaurc zune.yml ./
