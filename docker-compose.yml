@@ -1,0 +1,8 @@
+services:
+  bot:
+    build: .
+    environment:
+      DISCORD_BOT_TOKEN: ${DISCORD_BOT_TOKEN}
+    volumes:
+      - ./bot.db:/app/bot.db
+    restart: unless-stopped
