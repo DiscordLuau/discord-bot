@@ -22,8 +22,8 @@ tree_id = "5515a18b2066c694886ce3eef1d29bf62cfaa4ea"
 new_structure = true
 
 [graph."discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau".pkg_ref.dependencies]
-bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/bit" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
+bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/bit" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
 
 [graph."discord_luau/bit@0.0.0-f7d9ede6b2c2621a31afc26dc619011242d1cea8 luau".pkg_ref]
 ref_ty = "git"
@@ -32,7 +32,7 @@ tree_id = "f7d9ede6b2c2621a31afc26dc619011242d1cea8"
 new_structure = true
 
 [graph."discord_luau/builders@0.0.0-373f2c86af27cb63e739456672ecd9da860384fd luau"]
-direct = ["builders", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/builders" }, "standard"]
+direct = ["builders", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/builders" }, "standard"]
 
 [graph."discord_luau/builders@0.0.0-373f2c86af27cb63e739456672ecd9da860384fd luau".dependencies]
 api_types = ["discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau", "standard"]
@@ -47,15 +47,15 @@ tree_id = "373f2c86af27cb63e739456672ecd9da860384fd"
 new_structure = true
 
 [graph."discord_luau/builders@0.0.0-373f2c86af27cb63e739456672ecd9da860384fd luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/bit" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/bit" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
 
-[graph."discord_luau/classes@0.0.0-183949b698fe5de2247f17163d8eda968bde3684 luau"]
-direct = ["classes", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/classes" }, "standard"]
+[graph."discord_luau/classes@0.0.0-41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61 luau"]
+direct = ["classes", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/classes" }, "standard"]
 
-[graph."discord_luau/classes@0.0.0-183949b698fe5de2247f17163d8eda968bde3684 luau".dependencies]
+[graph."discord_luau/classes@0.0.0-41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61 luau".dependencies]
 api_types = ["discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau", "standard"]
 bit = ["discord_luau/bit@0.0.0-f7d9ede6b2c2621a31afc26dc619011242d1cea8 luau", "standard"]
 builders = ["discord_luau/builders@0.0.0-373f2c86af27cb63e739456672ecd9da860384fd luau", "standard"]
@@ -67,23 +67,23 @@ std_polyfills = ["discord_luau/std_polyfills@0.0.0-cb5b993628e2f14003bc59cbe04f6
 util = ["discord_luau/util@0.0.0-41d7235ade91d8a4782b497da9b87a57766ea182 luau", "standard"]
 voice = ["discord_luau/voice@0.0.0-a730609a84e5433aae4968199703a9d604cb0d4b luau", "standard"]
 
-[graph."discord_luau/classes@0.0.0-183949b698fe5de2247f17163d8eda968bde3684 luau".pkg_ref]
+[graph."discord_luau/classes@0.0.0-41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61 luau".pkg_ref]
 ref_ty = "git"
 repo = "https://github.com/DiscordLuau/discord-luau.git"
-tree_id = "183949b698fe5de2247f17163d8eda968bde3684"
+tree_id = "41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61"
 new_structure = true
 
-[graph."discord_luau/classes@0.0.0-183949b698fe5de2247f17163d8eda968bde3684 luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/bit" }, "standard"]
-builders = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/builders" }, "standard"]
-emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/emitter" }, "standard"]
+[graph."discord_luau/classes@0.0.0-41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61 luau".pkg_ref.dependencies]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/bit" }, "standard"]
+builders = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/builders" }, "standard"]
+emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/emitter" }, "standard"]
 future = [{ name = "yetanotherclown/luau_futures", version = "^2.0.0-beta.3", index = "https://github.com/pesde-pkg/index" }, "standard"]
-rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/rest" }, "standard"]
-state = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/state" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
-voice = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/voice" }, "standard"]
+rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/rest" }, "standard"]
+state = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/state" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
+voice = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/voice" }, "standard"]
 
 [graph."discord_luau/dave@0.0.0-2ed41dcd6d5fb94e303753c011ef6e166661a9f8 luau".dependencies]
 logger = ["discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau", "standard"]
@@ -96,17 +96,17 @@ tree_id = "2ed41dcd6d5fb94e303753c011ef6e166661a9f8"
 new_structure = true
 
 [graph."discord_luau/dave@0.0.0-2ed41dcd6d5fb94e303753c011ef6e166661a9f8 luau".pkg_ref.dependencies]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
 
 [graph."discord_luau/discord_luau@0.0.0-d0e1153dd1012ec9b3e79d28a1e1cfe10e6e9db3 luau"]
-direct = ["discord", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/discord_luau" }, "standard"]
+direct = ["discord", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/discord_luau" }, "standard"]
 
 [graph."discord_luau/discord_luau@0.0.0-d0e1153dd1012ec9b3e79d28a1e1cfe10e6e9db3 luau".dependencies]
 api_types = ["discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau", "standard"]
 bit = ["discord_luau/bit@0.0.0-f7d9ede6b2c2621a31afc26dc619011242d1cea8 luau", "standard"]
 builders = ["discord_luau/builders@0.0.0-373f2c86af27cb63e739456672ecd9da860384fd luau", "standard"]
-classes = ["discord_luau/classes@0.0.0-183949b698fe5de2247f17163d8eda968bde3684 luau", "standard"]
+classes = ["discord_luau/classes@0.0.0-41a89cdd1f9dd4b69bb5d88ba71a8d45a95dfb61 luau", "standard"]
 emitter = ["discord_luau/emitter@0.0.0-9968aecd797ad3307ce2e842be447373e44c7c57 luau", "standard"]
 future = ["yetanotherclown/luau_futures@2.0.0-beta.3 luau", "standard"]
 logger = ["discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau", "standard"]
@@ -122,17 +122,17 @@ tree_id = "d0e1153dd1012ec9b3e79d28a1e1cfe10e6e9db3"
 new_structure = true
 
 [graph."discord_luau/discord_luau@0.0.0-d0e1153dd1012ec9b3e79d28a1e1cfe10e6e9db3 luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/bit" }, "standard"]
-builders = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/builders" }, "standard"]
-classes = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/classes" }, "standard"]
-emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/emitter" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+bit = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/bit" }, "standard"]
+builders = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/builders" }, "standard"]
+classes = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/classes" }, "standard"]
+emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/emitter" }, "standard"]
 future = [{ name = "yetanotherclown/luau_futures", version = "^2.0.0-beta.3", index = "https://github.com/pesde-pkg/index" }, "standard"]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
-rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/rest" }, "standard"]
-state = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/state" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
+rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/rest" }, "standard"]
+state = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/state" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
 
 [graph."discord_luau/emitter@0.0.0-9968aecd797ad3307ce2e842be447373e44c7c57 luau".dependencies]
 logger = ["discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau", "standard"]
@@ -144,7 +144,7 @@ tree_id = "9968aecd797ad3307ce2e842be447373e44c7c57"
 new_structure = true
 
 [graph."discord_luau/emitter@0.0.0-9968aecd797ad3307ce2e842be447373e44c7c57 luau".pkg_ref.dependencies]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
 
 [graph."discord_luau/formdata@0.0.0-00b1bb93fb805986b9c7c875d557eed5ed430ffa luau".dependencies]
 stream = ["discord_luau/stream@0.0.0-a8b7045d81d840928d1559125ab08b8c18e9e39c luau", "standard"]
@@ -156,10 +156,10 @@ tree_id = "00b1bb93fb805986b9c7c875d557eed5ed430ffa"
 new_structure = true
 
 [graph."discord_luau/formdata@0.0.0-00b1bb93fb805986b9c7c875d557eed5ed430ffa luau".pkg_ref.dependencies]
-stream = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/stream" }, "standard"]
+stream = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/stream" }, "standard"]
 
 [graph."discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau"]
-direct = ["logger", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
+direct = ["logger", { repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
 
 [graph."discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau".dependencies]
 std_polyfills = ["discord_luau/std_polyfills@0.0.0-cb5b993628e2f14003bc59cbe04f6caa5b771e15 luau", "standard"]
@@ -171,7 +171,7 @@ tree_id = "d518f58e2c83d89261ed57cf2acc09cdddc32e7d"
 new_structure = true
 
 [graph."discord_luau/logger@0.0.0-d518f58e2c83d89261ed57cf2acc09cdddc32e7d luau".pkg_ref.dependencies]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
 
 [graph."discord_luau/opus@0.0.0-f4b2c146aefeafa8fc8fa78458056353ce2bcb5d luau".dependencies]
 std_polyfills = ["discord_luau/std_polyfills@0.0.0-cb5b993628e2f14003bc59cbe04f6caa5b771e15 luau", "standard"]
@@ -183,7 +183,7 @@ tree_id = "f4b2c146aefeafa8fc8fa78458056353ce2bcb5d"
 new_structure = true
 
 [graph."discord_luau/opus@0.0.0-f4b2c146aefeafa8fc8fa78458056353ce2bcb5d luau".pkg_ref.dependencies]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
 
 [graph."discord_luau/rest@0.0.0-359d285ca0ba8f44f7ab78e5113116e389636261 luau".dependencies]
 api_types = ["discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau", "standard"]
@@ -198,10 +198,10 @@ tree_id = "359d285ca0ba8f44f7ab78e5113116e389636261"
 new_structure = true
 
 [graph."discord_luau/rest@0.0.0-359d285ca0ba8f44f7ab78e5113116e389636261 luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-formdata = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/formdata" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+formdata = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/formdata" }, "standard"]
 future = [{ name = "yetanotherclown/luau_futures", version = "^2.0.0-beta.3", index = "https://github.com/pesde-pkg/index" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
 
 [graph."discord_luau/secret@0.0.0-324d52ccfbf17d6ef4806a26a83ea8cb561859b6 luau".pkg_ref]
 ref_ty = "git"
@@ -219,7 +219,7 @@ tree_id = "de37b7461db02a30e8322eb6d0e73d542c49d3c9"
 new_structure = true
 
 [graph."discord_luau/sodium@0.0.0-de37b7461db02a30e8322eb6d0e73d542c49d3c9 luau".pkg_ref.dependencies]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
 
 [graph."discord_luau/state@0.0.0-23cf54173e1a29954455592c0b514beaef7bb7e5 luau".dependencies]
 api_types = ["discord_luau/api_types@0.0.0-5515a18b2066c694886ce3eef1d29bf62cfaa4ea luau", "standard"]
@@ -238,14 +238,14 @@ tree_id = "23cf54173e1a29954455592c0b514beaef7bb7e5"
 new_structure = true
 
 [graph."discord_luau/state@0.0.0-23cf54173e1a29954455592c0b514beaef7bb7e5 luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-formdata = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/formdata" }, "standard"]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
-rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/rest" }, "standard"]
-secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/secret" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-utils = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
-websocket = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/websocket" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+formdata = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/formdata" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
+rest = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/rest" }, "standard"]
+secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/secret" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+utils = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
+websocket = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/websocket" }, "standard"]
 
 [graph."discord_luau/std_polyfills@0.0.0-cb5b993628e2f14003bc59cbe04f6caa5b771e15 luau".pkg_ref]
 ref_ty = "git"
@@ -285,17 +285,17 @@ tree_id = "a730609a84e5433aae4968199703a9d604cb0d4b"
 new_structure = true
 
 [graph."discord_luau/voice@0.0.0-a730609a84e5433aae4968199703a9d604cb0d4b luau".pkg_ref.dependencies]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-dave = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/dave" }, "standard"]
-emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/emitter" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+dave = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/dave" }, "standard"]
+emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/emitter" }, "standard"]
 future = [{ name = "yetanotherclown/luau_futures", version = "^2.0.0-beta.3", index = "https://github.com/pesde-pkg/index" }, "standard"]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
-opus = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/opus" }, "standard"]
-secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/secret" }, "standard"]
-sodium = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/sodium" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
-websocket = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/websocket" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
+opus = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/opus" }, "standard"]
+secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/secret" }, "standard"]
+sodium = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/sodium" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
+websocket = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/websocket" }, "standard"]
 
 [graph."discord_luau/websocket@0.0.0-6e4e0e86c9fbfbfcfba86845d9bfd63c91c3b566 luau".dependencies]
 accumulator = ["discord_luau/accumulator@0.0.0-e1e2ec118ac4125b3c8092da9c9913d751944dde luau", "standard"]
@@ -314,14 +314,14 @@ tree_id = "6e4e0e86c9fbfbfcfba86845d9bfd63c91c3b566"
 new_structure = true
 
 [graph."discord_luau/websocket@0.0.0-6e4e0e86c9fbfbfcfba86845d9bfd63c91c3b566 luau".pkg_ref.dependencies]
-accumulator = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/accumulator" }, "standard"]
-api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/api_types" }, "standard"]
-emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/emitter" }, "standard"]
+accumulator = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/accumulator" }, "standard"]
+api_types = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/api_types" }, "standard"]
+emitter = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/emitter" }, "standard"]
 future = [{ name = "yetanotherclown/luau_futures", version = "^2.0.0-beta.3", index = "https://github.com/pesde-pkg/index" }, "standard"]
-logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/logger" }, "standard"]
-secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/secret" }, "standard"]
-std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/std_polyfills" }, "standard"]
-util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "e810134", path = "packages/utilities" }, "standard"]
+logger = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/logger" }, "standard"]
+secret = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/secret" }, "standard"]
+std_polyfills = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/std_polyfills" }, "standard"]
+util = [{ repo = "https://github.com/DiscordLuau/discord-luau.git", rev = "c36d0a8", path = "packages/utilities" }, "standard"]
 
 [graph."yetanotherclown/luau_futures@2.0.0-beta.3 luau".pkg_ref]
 ref_ty = "pesde"
