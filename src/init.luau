@@ -1,29 +1,27 @@
-local discord = require("@self/../luau_packages/discord")
-local classes = require("@self/../luau_packages/classes")
-local builders = require("@self/../luau_packages/builders")
+local bot = require("@self/objects/discordBot")
+local logger = require("@self/objects/logger")
 
-local env = require("@self/../.env")
+local lifecycle = require("@self/utilities/lifecycle")
 
-local DISCORD_BOT_INTENTS = builders.intents
-	.new({
-		"Guilds",
-		"GuildMessages",
-		"MessageContent",
-	})
-	:build()
+local SINGLETONS = {
+	require("@self/singletons/database"),
+	require("@self/singletons/commands"),
+	require("@self/singletons/connectionStats"),
+	require("@self/singletons/wordReactor"),
+	require("@self/singletons/autoResponder"),
+	require("@self/singletons/staleThreadBumper"),
+}
 
-local bot = discord.bot.new({
-	token = env.DISCORD_BOT_TOKEN,
-	intents = DISCORD_BOT_INTENTS,
-	reconnect = true,
-})
-
-bot.onMessage:listen(function(message: classes.Message)
-	print(`Message sent by '{message.author.globalName}' said: '{message.content}'`)
-end)
+logger:info(`Loaded {#SINGLETONS} singleton(s) - waiting for all shards to be ready`)
 
 bot.onAllShardsReady:listenOnce(function()
-	print(`Bot '{bot.user.username}' is online!`)
+	logger:info("All shards ready - running onReady lifecycle")
+
+	lifecycle(SINGLETONS, "onReady")
+
+	logger:info("onReady lifecycle complete")
 end)
 
+logger:info("Connecting bot")
 bot:connectAsync():await()
+logger:info("Bot connected")
