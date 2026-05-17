@@ -1,0 +1,7 @@
+.git/
+lune_packages/
+.env.luau
+bot.db
+.claude/
+.vscode/
+*.md
