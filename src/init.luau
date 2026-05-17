@@ -11,6 +11,7 @@ local SINGLETONS = {
 	require("@self/singletons/wordReactor"),
 	require("@self/singletons/autoResponder"),
 	require("@self/singletons/staleThreadBumper"),
+	require("@self/singletons/welcomer"),
 }
 
 logger:info(`Loaded {#SINGLETONS} singleton(s) - waiting for all shards to be ready`)
