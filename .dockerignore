@@ -1,4 +1,5 @@
 .git/
+luau_packages/
 lune_packages/
 .env.luau
 bot.db

@@ -30,13 +30,15 @@ COPY .luaurc zune.yml ./
 COPY .zune/ ./.zune/
 COPY patches/ ./patches/
 COPY pesde.toml pesde.lock ./
-COPY luau_packages/ ./luau_packages/
 COPY src/ ./src/
+RUN pesde install
 
 # The bundled libopus requires GLIBC_2.43 but Ubuntu 24.04 only has 2.39.
 # Replace it with the system libopus which is compatible.
-RUN ln -sf /usr/lib/x86_64-linux-gnu/libopus.so.0 \
-    luau_packages/.pesde/discord_luau+opus/0.0.1/opus/binaries/Linux-X64/lib/libopus.so
+RUN for d in luau_packages/.pesde/discord_luau+opus/*/opus; do \
+        mkdir -p "$d/binaries/Linux-X64/lib"; \
+        ln -sf /usr/lib/x86_64-linux-gnu/libopus.so.0 "$d/binaries/Linux-X64/lib/libopus.so"; \
+    done
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
