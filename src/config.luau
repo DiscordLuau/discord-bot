@@ -31,6 +31,8 @@ config.permissions = {
 	},
 }
 
+config.welcomeChannelId = "1273035768700338278"
+
 config.helpForumChannelId = "1273041931210985533"
 config.helpersRoleId = "1313773219156594689"
 config.staleThreadThresholdSeconds = 3 * 24 * 60 * 60
