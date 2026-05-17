@@ -53,9 +53,9 @@ return function()
 		end
 
 		handleInteraction(interaction, {}, function()
-			local uptime = os.time() - connectionStats.connectedAt
-			local shards = connectionStats.shardCount
-			local reconnects = connectionStats.reconnectCount
+			local uptime = os.time() - connectionStats.ConnectedAt
+			local shards = connectionStats.ShardCount
+			local reconnects = connectionStats.ReconnectCount
 
 			interaction
 				:messageAsync(
