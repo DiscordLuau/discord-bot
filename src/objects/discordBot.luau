@@ -6,6 +6,7 @@ local env = require("../../.env")
 local DISCORD_BOT_INTENTS = builders.intents
 	.new({
 		"Guilds",
+		"GuildMembers",
 		"GuildMessages",
 		"MessageContent",
 	})
