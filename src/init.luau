@@ -4,6 +4,7 @@ local logger = require("@self/objects/logger")
 local lifecycle = require("@self/utilities/lifecycle")
 
 local SINGLETONS = {
+	require("@self/singletons/logSink"),
 	require("@self/singletons/database"),
 	require("@self/singletons/commands"),
 	require("@self/singletons/connectionStats"),
