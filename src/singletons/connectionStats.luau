@@ -13,8 +13,8 @@ function ConnectionStats:onReady()
 
 	logger:info(`Connection stats tracking started`)
 
-	discordBot.onReady:listen(function()
-		self.ShardCount += 1
+	discordBot.onAllShardsReady:listen(function()
+		self.ShardCount = #discordBot.state.webSocketManager.shards
 	end)
 
 	discordBot.onShardReconnected:listen(function(shardId)
