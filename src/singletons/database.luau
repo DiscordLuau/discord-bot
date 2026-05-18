@@ -58,6 +58,18 @@ function DataBase:onReady()
 		)
 	]])
 
+	self.db:exec([[
+		CREATE TABLE IF NOT EXISTS logs (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			level TEXT NOT NULL,
+			level_index INTEGER NOT NULL,
+			message TEXT NOT NULL,
+			time INTEGER NOT NULL
+		)
+	]])
+
+	self.db:exec(`DELETE FROM logs WHERE time < {os.time() - 30 * 86400}`)
+
 	logger:info("Database ready")
 end
 
