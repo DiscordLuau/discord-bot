@@ -1,8 +1,10 @@
 local builders = require("../../../luau_packages/builders")
 
+local discordBot = require("../../objects/discordBot")
+
 local commands = require("../../singletons/commands")
 local connectionStats = require("../../singletons/connectionStats")
-local discordBot = require("../../objects/discordBot")
+local logSink = require("../../singletons/logSink")
 
 local binder = require("../../utilities/binder")
 local handleInteraction = require("../../utilities/handleInteraction")
@@ -53,17 +55,20 @@ return function()
 		end
 
 		handleInteraction(interaction, {}, function()
-			local uptime = os.time() - connectionStats.ConnectedAt
+			local now = os.time()
+			local uptime = now - connectionStats.ConnectedAt
+			local sessionUptime = now - connectionStats.LastConnectedAt
 			local shards = connectionStats.ShardCount
 			local reconnects = connectionStats.ReconnectCount
+			local criticals = logSink.CriticalCount
 
-			interaction
-				:messageAsync(
-					respondCommand(
-						`Uptime: **{formatDuration(uptime)}** · Shards: **{shards}** · Reconnects: **{reconnects}**`
-					)
-				)
-				:poll()
+			local reconnectLabel = reconnects == 1 and "Reconnection" or "Reconnections"
+			local criticalLabel = criticals == 1 and "Critical Error" or "Critical Errors"
+			local shardLabel = shards == 1 and "Shard" or "Shards"
+
+			local response = `Uptime: **{formatDuration(uptime)}** · Session: **{formatDuration(sessionUptime)}** · **{reconnects}** {reconnectLabel} · **{criticals}** {criticalLabel} · **{shards}** {shardLabel}`
+
+			interaction:messageAsync(respondCommand(response)):poll()
 		end)
 	end))
 
