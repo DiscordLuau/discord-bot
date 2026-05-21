@@ -19,6 +19,7 @@ end
 
 function DataBase:getConfig(key: string): string
 	local row = self.db:query(`SELECT value FROM config WHERE key = '{self:escape(key)}'`):get()
+
 	return if row then row.value :: string else ""
 end
 
@@ -68,7 +69,18 @@ function DataBase:onReady()
 		)
 	]])
 
+	self.db:exec([[
+		CREATE TABLE IF NOT EXISTS process_snapshots (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			time INTEGER NOT NULL,
+			resident_set_size_in_kb INTEGER NOT NULL,
+			cpu_time_in_seconds REAL NOT NULL,
+			memory_used_in_kb INTEGER NOT NULL DEFAULT 0
+		)
+	]])
+
 	self.db:exec(`DELETE FROM logs WHERE time < {os.time() - 30 * 86400}`)
+	self.db:exec(`DELETE FROM process_snapshots WHERE time < {os.time() - 86400}`)
 
 	logger:info("Database ready")
 end
