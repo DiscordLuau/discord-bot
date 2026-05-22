@@ -8,6 +8,7 @@ local SINGLETONS = {
 	require("@self/singletons/database"),
 	require("@self/singletons/commands"),
 	require("@self/singletons/connectionStats"),
+	require("@self/singletons/statsCollector"),
 	require("@self/singletons/presence"),
 	require("@self/singletons/wordReactor"),
 	require("@self/singletons/autoResponder"),
@@ -26,5 +27,7 @@ bot.onAllShardsReady:listenOnce(function()
 end)
 
 logger:info("Connecting bot")
+
 bot:connectAsync():await()
+
 logger:info("Bot connected")
