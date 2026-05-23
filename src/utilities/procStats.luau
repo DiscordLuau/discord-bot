@@ -1,15 +1,13 @@
 local CLOCK_TICKS_PER_SECOND = 100
 
-local function readMemoryInformation(): { [string]: number }
+local function readMemoryInformation(): { totalKb: number, usedKb: number }
 	local content = zune.fs.readFileSync("/proc/meminfo")
 
-	local result = {}
+	local total = tonumber(content:match("MemTotal:%s*(%d+)")) or 0
 
-	for key, value in content:gmatch("(%w+):%s*(%d+)") do
-		result[key] = tonumber(value) :: number
-	end
+	local available = tonumber(content:match("MemAvailable:%s*(%d+)")) or 0
 
-	return result
+	return { totalKb = total, usedKb = total - available }
 end
 
 local function readProcessStatus(): { [string]: number }
@@ -82,9 +80,8 @@ return function(): ProcStats
 	local cpuSeconds = (statistics.utime + statistics.stime) / CLOCK_TICKS_PER_SECOND
 	local avgCpuPercent = if processUptimeSeconds > 0 then (cpuSeconds / processUptimeSeconds) * 100 else 0
 
-	local memoryTotalKb = memoryInformation.MemTotal or 0
-	local memoryAvailableKb = memoryInformation.MemAvailable or 0
-	local memoryUsedKb = memoryTotalKb - memoryAvailableKb
+	local memoryTotalKb = memoryInformation.totalKb
+	local memoryUsedKb = memoryInformation.usedKb
 
 	return {
 		residentSetSize = formatBytes(status.VmRSS),
