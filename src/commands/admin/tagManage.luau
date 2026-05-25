@@ -1,12 +1,11 @@
 local builders = require("../../../luau_packages/builders")
 
-local commands = require("../../singletons/commands")
-local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
 
-local binder = require("../../utilities/binder")
-local handleInteraction = require("../../utilities/handleInteraction")
+local checkPermissions = require("../../utilities/checkPermissions")
+local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
+
 local tags = require("../../utilities/tags")
 
 local MODAL_CREATE_ID = "tag_create"
@@ -15,15 +14,15 @@ local MODAL_FIELD_NAME = "name"
 local MODAL_FIELD_CONTENT = "content"
 
 local function formatList(): string
-	local all = tags.getAll()
+	local allTags = tags.getAll()
 
-	if #all == 0 then
+	if #allTags == 0 then
 		return "No tags exist yet."
 	end
 
 	local names = {}
 
-	for _, tag in all do
+	for _, tag in allTags do
 		table.insert(names, `\`{tag.name}\``)
 	end
 
@@ -31,10 +30,7 @@ local function formatList(): string
 end
 
 local function makeActionRow(textInput: any)
-	return builders.message.components.actionRow
-		.new()
-		:addComponent(textInput)
-		:build()
+	return builders.message.components.actionRow.new():addComponent(textInput):build()
 end
 
 local nameOption = builders.interaction.option
@@ -89,26 +85,17 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-return function()
-	local addToBinder, cleanup = binder()
+return {
+	command = COMMAND_OBJECT,
+	category = "Admin",
+	cooldown = { { seconds = 5, per = "user" } },
+	guards = { permissionGuard({ "admin" }) },
 
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "manage-tags" then
-			return
-		end
+	execute = function() end,
 
-		handleInteraction(interaction, { "admin" }, function()
-			local subcommand = interaction.data.options[1]
-
-			if not subcommand then
-				logger:warn("Received /manage-tags interaction with no subcommand")
-
-				interaction:messageAsync(respondCommand("No subcommand provided.")):poll()
-
-				return
-			end
-
-			if subcommand.name == "create" then
+	subcommands = {
+		create = {
+			execute = function(interaction)
 				local modal = builders.message.components.modal
 					.new()
 					:setCustomId(MODAL_CREATE_ID)
@@ -138,15 +125,22 @@ return function()
 					:build()
 
 				interaction:modalAsync(modal):poll()
+			end,
+		},
+		edit = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
 
-			elseif subcommand.name == "edit" then
-				local nameOpt = subcommand.options and subcommand.options[1]
-				local tagName: string = nameOpt and nameOpt.value
+				local nameOption = subcommand.options and subcommand.options[1]
+
+				local tagName: string = nameOption and nameOption.value
 
 				local foundTag = tags.get(tagName)
 
 				if not foundTag then
-					interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`)):poll()
+					logger:warn(`edit: no tag found with name "{tagName}"`)
+
+					interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`, true)):poll()
 
 					return
 				end
@@ -170,13 +164,18 @@ return function()
 					:build()
 
 				interaction:modalAsync(modal):poll()
-
-			elseif subcommand.name == "delete" then
-				local nameOpt = subcommand.options and subcommand.options[1]
-				local tagName: string = nameOpt and nameOpt.value
+			end,
+		},
+		delete = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
+				local nameOption = subcommand.options and subcommand.options[1]
+				local tagName: string = nameOption and nameOption.value
 
 				if not tags.exists(tagName) then
-					interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`)):poll()
+					logger:warn(`delete: no tag found with name "{tagName}"`)
+
+					interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`, true)):poll()
 
 					return
 				end
@@ -186,75 +185,96 @@ return function()
 				logger:info(`Deleted tag "{tagName}"`)
 
 				interaction:messageAsync(respondCommand(`Deleted tag \`{tagName}\`.`)):poll()
-
-			elseif subcommand.name == "list" then
+			end,
+		},
+		list = {
+			execute = function(interaction)
 				interaction:messageAsync(respondCommand(formatList())):poll()
+			end,
+		},
+	},
+	modals = {
+		[MODAL_CREATE_ID] = function(modal)
+			if not checkPermissions(modal, { "admin" }) then
+				logger:warn(
+					`tag_create modal: permission denied for user {modal.member and modal.member.user and modal.member.user.id}`
+				)
 
-			else
-				logger:warn(`Unknown /manage-tags subcommand '{subcommand.name}'`)
-
-				interaction:messageAsync(respondCommand(`Unknown subcommand \`{subcommand.name}\`.`)):poll()
-			end
-		end)
-	end))
-
-	addToBinder(discordBot.onModalInteraction:listen(function(modal)
-		local isCreate = modal.data.customId == MODAL_CREATE_ID
-		local isEdit = modal.data.customId:find(MODAL_EDIT_PREFIX, 1, true) == 1
-
-		if not isCreate and not isEdit then
-			return
-		end
-
-		handleInteraction(modal, { "admin" }, function()
-			local content = modal:getContent(MODAL_FIELD_CONTENT) or ""
-
-			if content == "" then
-				modal:messageAsync(respondCommand("Tag content cannot be empty.")):poll()
+				modal:messageAsync(respondCommand("You don't have permission to use this command.", true)):poll()
 
 				return
 			end
 
-			if isCreate then
-				local name = (modal:getContent(MODAL_FIELD_NAME) or ""):lower():match("^%s*(.-)%s*$")
+			local content = modal:getContent(MODAL_FIELD_CONTENT) or ""
 
-				if name == "" then
-					modal:messageAsync(respondCommand("Tag name cannot be empty.")):poll()
+			if content == "" then
+				logger:warn("tag_create modal: submitted with empty content")
 
-					return
-				end
+				modal:messageAsync(respondCommand("Tag content cannot be empty.", true)):poll()
 
-				if tags.exists(name) then
-					modal:messageAsync(respondCommand(`A tag with the name \`{name}\` already exists.`)):poll()
-
-					return
-				end
-
-				tags.create(name, content)
-
-				logger:info(`Created tag "{name}"`)
-
-				modal:messageAsync(respondCommand(`Created tag \`{name}\`.`)):poll()
-
-			else
-				local tagName = modal.data.customId:sub(#MODAL_EDIT_PREFIX + 1)
-
-				if not tags.exists(tagName) then
-					modal:messageAsync(respondCommand(`Tag \`{tagName}\` no longer exists.`)):poll()
-
-					return
-				end
-
-				tags.update(tagName, content)
-
-				logger:info(`Edited tag "{tagName}"`)
-
-				modal:messageAsync(respondCommand(`Updated tag \`{tagName}\`.`)):poll()
+				return
 			end
-		end)
-	end))
 
-	commands:registerAsync(COMMAND_OBJECT)
+			local name = (modal:getContent(MODAL_FIELD_NAME) or ""):lower():match("^%s*(.-)%s*$")
 
-	return cleanup
-end
+			if name == "" then
+				logger:warn("tag_create modal: submitted with empty name")
+
+				modal:messageAsync(respondCommand("Tag name cannot be empty.", true)):poll()
+
+				return
+			end
+
+			if tags.exists(name) then
+				logger:warn(`tag_create modal: tag "{name}" already exists`)
+
+				modal:messageAsync(respondCommand(`A tag with the name \`{name}\` already exists.`, true)):poll()
+
+				return
+			end
+
+			tags.create(name, content)
+
+			logger:info(`Created tag "{name}"`)
+
+			modal:messageAsync(respondCommand(`Created tag \`{name}\`.`)):poll()
+		end,
+		[`{MODAL_EDIT_PREFIX}*`] = function(modal)
+			if not checkPermissions(modal, { "admin" }) then
+				logger:warn(
+					`tag_edit modal: permission denied for user {modal.member and modal.member.user and modal.member.user.id}`
+				)
+
+				modal:messageAsync(respondCommand("You don't have permission to use this command.", true)):poll()
+
+				return
+			end
+
+			local content = modal:getContent(MODAL_FIELD_CONTENT) or ""
+
+			if content == "" then
+				logger:warn("tag_edit modal: submitted with empty content")
+
+				modal:messageAsync(respondCommand("Tag content cannot be empty.", true)):poll()
+
+				return
+			end
+
+			local tagName = modal.data.customId:sub(#MODAL_EDIT_PREFIX + 1)
+
+			if not tags.exists(tagName) then
+				logger:warn(`tag_edit modal: tag "{tagName}" no longer exists`)
+
+				modal:messageAsync(respondCommand(`Tag \`{tagName}\` no longer exists.`, true)):poll()
+
+				return
+			end
+
+			tags.update(tagName, content)
+
+			logger:info(`Edited tag "{tagName}"`)
+
+			modal:messageAsync(respondCommand(`Updated tag \`{tagName}\`.`)):poll()
+		end,
+	},
+}

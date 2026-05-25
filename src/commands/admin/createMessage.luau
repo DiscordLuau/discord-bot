@@ -1,12 +1,10 @@
-local builders = require("../../../luau_packages/builders")
-
-local commands = require("../../singletons/commands")
 local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
 
-local binder = require("../../utilities/binder")
-local handleInteraction = require("../../utilities/handleInteraction")
+local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
+
+local builders = require("../../../luau_packages/builders")
 
 local COMMAND_OBJECT = builders.interaction.interaction
 	.new()
@@ -37,60 +35,47 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-return function()
-	local addToBinder, cleanup = binder()
+return {
+	command = COMMAND_OBJECT,
+	category = "Admin",
+	cooldown = { { seconds = 5, per = "user" } },
+	guards = { permissionGuard({ "admin" }) },
 
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "create-message" then
+	execute = function(interaction)
+		local options = interaction.data.options
+		local channelId: string = options[1].value
+		local messageContent: string = options[2].value
+		local channelResult = discordBot:getChannelAsync(channelId):await()
+
+		if channelResult:isErr() then
+			local errorMessage = channelResult:unwrapErr()
+
+			logger:warn(`/create-message failed to fetch channel {channelId}: {errorMessage}`)
+
+			interaction:messageAsync(respondCommand(`Failed to fetch channel: {errorMessage}`, true)):poll()
+
 			return
 		end
 
-		handleInteraction(interaction, { "admin" }, function()
-			local options = interaction.data.options
+		local sentResult = channelResult
+			:unwrapOk()
+			:createMessageAsync(builders.message.message.new():setContent(messageContent):build())
+			:await()
 
-			local channelId: string = options[1].value
-			local messageContent: string = options[2].value
+		if sentResult:isErr() then
+			local errorMessage = sentResult:unwrapErr()
 
-			local channelResult = discordBot:getChannelAsync(channelId):await()
+			logger:warn(`/create-message failed to send to channel {channelId}: {errorMessage}`)
 
-			if channelResult:isErr() then
-				local errorMessage = channelResult:unwrapErr()
+			interaction:messageAsync(respondCommand(`Failed to send message: {errorMessage}`, true)):poll()
 
-				logger:warn(`/create-message failed to fetch channel {channelId}: {errorMessage}`)
+			return
+		end
 
-				interaction:messageAsync(respondCommand(`Failed to fetch channel: {errorMessage}`)):poll()
+		local sentMessage = sentResult:unwrapOk()
 
-				return
-			end
+		logger:info(`/create-message sent message {sentMessage.id} to channel {channelId}`)
 
-			local sentResult = channelResult:unwrapOk()
-				:createMessageAsync(
-					builders.message.message
-						.new()
-						:setContent(messageContent)
-						:build()
-				)
-				:await()
-
-			if sentResult:isErr() then
-				local errorMessage = sentResult:unwrapErr()
-
-				logger:warn(`/create-message failed to send to channel {channelId}: {errorMessage}`)
-
-				interaction:messageAsync(respondCommand(`Failed to send message: {errorMessage}`)):poll()
-
-				return
-			end
-
-			local sentMessage = sentResult:unwrapOk()
-
-			logger:info(`/create-message sent message {sentMessage.id} to channel {channelId}`)
-
-			interaction:messageAsync(respondCommand(`Message sent. ID: \`{sentMessage.id}\``)):poll()
-		end)
-	end))
-
-	commands:registerAsync(COMMAND_OBJECT)
-
-	return cleanup
-end
+		interaction:messageAsync(respondCommand(`Message sent. ID: \`{sentMessage.id}\``)):poll()
+	end,
+}

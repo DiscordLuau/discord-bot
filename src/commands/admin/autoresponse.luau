@@ -1,15 +1,13 @@
-local builders = require("../../../luau_packages/builders")
-
-local commands = require("../../singletons/commands")
-local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
 
 local autoresponses = require("../../utilities/autoresponses")
-local binder = require("../../utilities/binder")
-local handleInteraction = require("../../utilities/handleInteraction")
+local checkPermissions = require("../../utilities/checkPermissions")
 local parseCommaSeparated = require("../../utilities/parseCommaSeparated")
+local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
 local truncate = require("../../utilities/truncate")
+
+local builders = require("../../../luau_packages/builders")
 
 local MODAL_CUSTOM_ID = "autoresponse_add"
 local MODAL_FIELD_KEYPHRASES = "keyphrases"
@@ -37,6 +35,10 @@ local function formatList(): string
 	end
 
 	return table.concat(lines, "\n"):gsub("\n$", "")
+end
+
+local function makeActionRow(textInput: any)
+	return builders.message.components.actionRow.new():addComponent(textInput):build()
 end
 
 local idOption = builders.interaction.option
@@ -83,30 +85,17 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-local function makeActionRow(textInput: any)
-	return builders.message.components.actionRow.new():addComponent(textInput):build()
-end
+return {
+	command = COMMAND_OBJECT,
+	category = "Admin",
+	cooldown = { { seconds = 5, per = "user" } },
+	guards = { permissionGuard({ "admin" }) },
 
-return function()
-	local addToBinder, cleanup = binder()
+	execute = function() end,
 
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "manage-autoresponse" then
-			return
-		end
-
-		handleInteraction(interaction, { "admin" }, function()
-			local subcommand = interaction.data.options[1]
-
-			if not subcommand then
-				logger:warn("Received /manage-autoresponse interaction with no subcommand")
-
-				interaction:messageAsync(respondCommand("No subcommand provided.")):poll()
-
-				return
-			end
-
-			if subcommand.name == "add" then
+	subcommands = {
+		add = {
+			execute = function(interaction)
 				local modal = builders.message.components.modal
 					.new()
 					:setCustomId(MODAL_CUSTOM_ID)
@@ -147,12 +136,22 @@ return function()
 					:build()
 
 				interaction:modalAsync(modal):poll()
-			elseif subcommand.name == "remove" then
-				local idOpt = subcommand.options and subcommand.options[1]
-				local autoResponseId: number = idOpt and idOpt.value
+			end,
+		},
+		remove = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
+
+				local idOption = subcommand.options and subcommand.options[1]
+
+				local autoResponseId: number = idOption and idOption.value
 
 				if not autoresponses.exists(autoResponseId) then
-					interaction:messageAsync(respondCommand(`No autoresponse found with ID {autoResponseId}.`)):poll()
+					logger:warn(`remove: no autoresponse found with ID {autoResponseId}`)
+
+					interaction
+						:messageAsync(respondCommand(`No autoresponse found with ID {autoResponseId}.`, true))
+						:poll()
 
 					return
 				end
@@ -162,37 +161,44 @@ return function()
 				logger:info(`Deleted autoresponse ID {autoResponseId}`)
 
 				interaction:messageAsync(respondCommand(`Removed autoresponse ID {autoResponseId}.`)):poll()
-			elseif subcommand.name == "list" then
+			end,
+		},
+		list = {
+			execute = function(interaction)
 				interaction:messageAsync(respondCommand(formatList())):poll()
-			else
-				logger:warn(`Unknown /manage-autoresponse subcommand '{subcommand.name}'`)
+			end,
+		},
+	},
+	modals = {
+		[MODAL_CUSTOM_ID] = function(modal)
+			if not checkPermissions(modal, { "admin" }) then
+				logger:warn(
+					`autoresponse_add modal: permission denied for user {modal.member and modal.member.user and modal.member.user.id}`
+				)
 
-				interaction:messageAsync(respondCommand(`Unknown subcommand \`{subcommand.name}\`.`)):poll()
+				modal:messageAsync(respondCommand("You don't have permission to use this command.", true)):poll()
+
+				return
 			end
-		end)
-	end))
 
-	addToBinder(discordBot.onModalInteraction:listen(function(modal)
-		if modal.data.customId ~= MODAL_CUSTOM_ID then
-			return
-		end
-
-		handleInteraction(modal, { "admin" }, function()
 			local rawKeyphrases = modal:getContent(MODAL_FIELD_KEYPHRASES) or ""
 			local content = modal:getContent(MODAL_FIELD_CONTENT) or ""
 			local rawReply = (modal:getContent(MODAL_FIELD_REPLY) or "yes"):lower():match("^%s*(.-)%s*$")
 			local shouldReply = rawReply ~= "no"
-
 			local keyphrases = parseCommaSeparated(rawKeyphrases)
 
 			if #keyphrases == 0 then
-				modal:messageAsync(respondCommand("At least one keyphrase is required.")):poll()
+				logger:warn("autoresponse_add modal: submitted with no keyphrases")
+
+				modal:messageAsync(respondCommand("At least one keyphrase is required.", true)):poll()
 
 				return
 			end
 
 			if content == "" then
-				modal:messageAsync(respondCommand("Response content cannot be empty.")):poll()
+				logger:warn("autoresponse_add modal: submitted with empty content")
+
+				modal:messageAsync(respondCommand("Response content cannot be empty.", true)):poll()
 
 				return
 			end
@@ -210,10 +216,6 @@ return function()
 					)
 				)
 				:poll()
-		end)
-	end))
-
-	commands:registerAsync(COMMAND_OBJECT)
-
-	return cleanup
-end
+		end,
+	},
+}

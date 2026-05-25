@@ -1,14 +1,12 @@
 local builders = require("../../../luau_packages/builders")
 
 local config = require("../../config")
-local commands = require("../../singletons/commands")
 local database = require("../../singletons/database")
 local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
 
-local binder = require("../../utilities/binder")
 local guidelines = require("../../utilities/guidelines")
-local handleInteraction = require("../../utilities/handleInteraction")
+local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
 
 local IS_COMPONENTS_V2 = 32768
@@ -53,9 +51,7 @@ local function buildGuidelinesContainer(guidelinesList: { guidelines.Guideline }
 		.new()
 		:addComponent(builders.message.components.textDisplay.new():setContent("## Server Guidelines"):build())
 		:addComponent(builders.message.components.separator.new():setDivider(true):setSpacing(1):build())
-		:addComponent(
-			builders.message.components.textDisplay.new():setContent(table.concat(lines, "\n")):build()
-		)
+		:addComponent(builders.message.components.textDisplay.new():setContent(table.concat(lines, "\n")):build())
 
 	if #footerParts > 0 then
 		container:addComponent(builders.message.components.separator.new():setDivider(false):setSpacing(1):build())
@@ -211,30 +207,22 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-return function()
-	local addToBinder, cleanup = binder()
+return {
+	command = COMMAND_OBJECT,
+	category = "Admin",
+	cooldown = { { seconds = 5, per = "user" } },
+	guards = { permissionGuard({ "admin" }) },
 
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "manage-guidelines" then
-			return
-		end
+	execute = function() end,
 
-		handleInteraction(interaction, { "admin" }, function()
-			local subcommand = interaction.data.options[1]
-
-			if not subcommand then
-				logger:warn("Received /manage-guidelines interaction with no subcommand")
-
-				interaction:messageAsync(respondCommand("No subcommand provided.")):poll()
-
-				return
-			end
-
-			if subcommand.name == "add" then
+	subcommands = {
+		add = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
 				local textOption = subcommand.options and subcommand.options[1]
 
 				if not textOption or not textOption.value or textOption.value == "" then
-					interaction:messageAsync(respondCommand("No guideline text provided.")):poll()
+					interaction:messageAsync(respondCommand("No guideline text provided.", true)):poll()
 
 					return
 				end
@@ -248,22 +236,32 @@ return function()
 				local updateSuccess, updateError = updateGuidelinesMessage(guidelinesList)
 
 				if not updateSuccess then
-					interaction:messageAsync(respondCommand(
-						`Guideline added (ID {newId}) but failed to update the guidelines message: {updateError}`
-					)):poll()
+					interaction
+						:messageAsync(
+							respondCommand(
+								`Guideline added (ID {newId}) but failed to update the guidelines message: {updateError}`,
+								true
+							)
+						)
+						:poll()
 
 					return
 				end
 
 				interaction:messageAsync(respondCommand(`Added guideline ID {newId}: "{guidelineText}"`)):poll()
-
-			elseif subcommand.name == "remove" then
+			end,
+		},
+		remove = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
 				local guidelineIdOption = subcommand.options and subcommand.options[1]
 				local guidelineId: number = guidelineIdOption and guidelineIdOption.value
 				local existing = guidelines.get(guidelineId)
 
 				if not existing then
-					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`)):poll()
+					logger:warn(`remove: no guideline found with ID {guidelineId}`)
+
+					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`, true)):poll()
 
 					return
 				end
@@ -276,28 +274,40 @@ return function()
 				local updateSuccess, updateError = updateGuidelinesMessage(guidelinesList)
 
 				if not updateSuccess then
-					interaction:messageAsync(respondCommand(
-						`Guideline removed but failed to update the guidelines message: {updateError}`
-					)):poll()
+					interaction
+						:messageAsync(
+							respondCommand(
+								`Guideline removed but failed to update the guidelines message: {updateError}`,
+								true
+							)
+						)
+						:poll()
 
 					return
 				end
 
 				interaction:messageAsync(respondCommand(`Removed guideline ID {guidelineId}: "{existing.text}"`)):poll()
-
-			elseif subcommand.name == "hide" then
+			end,
+		},
+		hide = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
 				local guidelineIdOption = subcommand.options and subcommand.options[1]
 				local guidelineId: number = guidelineIdOption and guidelineIdOption.value
 				local existing = guidelines.get(guidelineId)
 
 				if not existing then
-					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`)):poll()
+					logger:warn(`hide: no guideline found with ID {guidelineId}`)
+
+					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`, true)):poll()
 
 					return
 				end
 
 				if existing.hidden == 1 then
-					interaction:messageAsync(respondCommand(`Guideline ID {guidelineId} is already hidden.`)):poll()
+					interaction
+						:messageAsync(respondCommand(`Guideline ID {guidelineId} is already hidden.`, true))
+						:poll()
 
 					return
 				end
@@ -310,28 +320,40 @@ return function()
 				local updateSuccess, updateError = updateGuidelinesMessage(guidelinesList)
 
 				if not updateSuccess then
-					interaction:messageAsync(respondCommand(
-						`Guideline hidden but failed to update the guidelines message: {updateError}`
-					)):poll()
+					interaction
+						:messageAsync(
+							respondCommand(
+								`Guideline hidden but failed to update the guidelines message: {updateError}`,
+								true
+							)
+						)
+						:poll()
 
 					return
 				end
 
 				interaction:messageAsync(respondCommand(`Hidden guideline ID {guidelineId}: "{existing.text}"`)):poll()
-
-			elseif subcommand.name == "unhide" then
+			end,
+		},
+		unhide = {
+			execute = function(interaction)
+				local subcommand = interaction.data.options[1]
 				local guidelineIdOption = subcommand.options and subcommand.options[1]
 				local guidelineId: number = guidelineIdOption and guidelineIdOption.value
 				local existing = guidelines.get(guidelineId)
 
 				if not existing then
-					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`)):poll()
+					logger:warn(`unhide: no guideline found with ID {guidelineId}`)
+
+					interaction:messageAsync(respondCommand(`No guideline found with ID {guidelineId}.`, true)):poll()
 
 					return
 				end
 
 				if existing.hidden == 0 then
-					interaction:messageAsync(respondCommand(`Guideline ID {guidelineId} is already visible.`)):poll()
+					interaction
+						:messageAsync(respondCommand(`Guideline ID {guidelineId} is already visible.`, true))
+						:poll()
 
 					return
 				end
@@ -344,43 +366,47 @@ return function()
 				local updateSuccess, updateError = updateGuidelinesMessage(guidelinesList)
 
 				if not updateSuccess then
-					interaction:messageAsync(respondCommand(
-						`Guideline unhidden but failed to update the guidelines message: {updateError}`
-					)):poll()
+					interaction
+						:messageAsync(
+							respondCommand(
+								`Guideline unhidden but failed to update the guidelines message: {updateError}`,
+								true
+							)
+						)
+						:poll()
 
 					return
 				end
 
-				interaction:messageAsync(respondCommand(`Unhidden guideline ID {guidelineId}: "{existing.text}"`)):poll()
-
-			elseif subcommand.name == "list" then
+				interaction
+					:messageAsync(respondCommand(`Unhidden guideline ID {guidelineId}: "{existing.text}"`))
+					:poll()
+			end,
+		},
+		list = {
+			execute = function(interaction)
 				local guidelinesList = guidelines.getAll()
 
 				interaction:messageAsync(respondCommand(formatGuidelinesList(guidelinesList))):poll()
-
-			elseif subcommand.name == "update" then
+			end,
+		},
+		update = {
+			execute = function(interaction)
 				local guidelinesList = guidelines.getAll()
 				local updateSuccess, updateError = updateGuidelinesMessage(guidelinesList)
 
 				if not updateSuccess then
-					interaction:messageAsync(respondCommand(`Failed to update guidelines message: {updateError}`)):poll()
+					interaction
+						:messageAsync(respondCommand(`Failed to update guidelines message: {updateError}`, true))
+						:poll()
 
 					return
 				end
 
-				interaction:messageAsync(respondCommand(
-					`Guidelines message updated with {#guidelinesList} guideline(s).`
-				)):poll()
-
-			else
-				logger:warn(`Unknown /manage-guidelines subcommand '{subcommand.name}'`)
-
-				interaction:messageAsync(respondCommand(`Unknown subcommand \`{subcommand.name}\`.`)):poll()
-			end
-		end)
-	end))
-
-	commands:registerAsync(COMMAND_OBJECT)
-
-	return cleanup
-end
+				interaction
+					:messageAsync(respondCommand(`Guidelines message updated with {#guidelinesList} guideline(s).`))
+					:poll()
+			end,
+		},
+	},
+}
