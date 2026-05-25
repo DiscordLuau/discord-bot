@@ -1,14 +1,10 @@
-local builders = require("../../../luau_packages/builders")
-
-local commands = require("../../singletons/commands")
-local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
 
-local binder = require("../../utilities/binder")
-local handleInteraction = require("../../utilities/handleInteraction")
 local respondCommand = require("../../utilities/respondCommand")
 local respondMessage = require("../../utilities/respondMessage")
 local tags = require("../../utilities/tags")
+
+local builders = require("../../../luau_packages/builders")
 
 local COMMAND_OBJECT = builders.interaction.interaction
 	.new()
@@ -29,14 +25,32 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-return function()
-	local addToBinder, cleanup = binder()
+return {
+	command = COMMAND_OBJECT,
+	category = "Utility",
 
-	addToBinder(discordBot.onAutocompleteInteraction:listen(function(interaction)
-		if interaction.data.name ~= "tag" then
+	execute = function(interaction)
+		local nameOption = interaction.data.options and interaction.data.options[1]
+		local tagName: string = nameOption and nameOption.value
+		local foundTag = tags.get(tagName)
+
+		if not foundTag then
+			interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`, true)):poll()
+
 			return
 		end
 
+		interaction
+			:messageAsync(respondMessage({
+				builders.message.components.container
+					.new()
+					:addComponent(builders.message.components.textDisplay.new():setContent(foundTag.content):build())
+					:build(),
+			}))
+			:poll()
+	end,
+
+	autocomplete = function(interaction)
 		local focused = interaction.data.options and interaction.data.options[1]
 
 		if not focused then
@@ -63,40 +77,5 @@ return function()
 		end
 
 		interaction:respondAsync(choices):poll()
-	end))
-
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "tag" then
-			return
-		end
-
-		handleInteraction(interaction, {}, function()
-			local nameOpt = interaction.data.options and interaction.data.options[1]
-			local tagName: string = nameOpt and nameOpt.value
-
-			local foundTag = tags.get(tagName)
-
-			if not foundTag then
-				interaction:messageAsync(respondCommand(`No tag found with name \`{tagName}\`.`)):poll()
-
-				return
-			end
-
-			interaction:messageAsync(respondMessage({
-				builders.message.components.container
-					.new()
-					:addComponent(
-						builders.message.components.textDisplay
-							.new()
-							:setContent(foundTag.content)
-							:build()
-					)
-					:build(),
-			})):poll()
-		end)
-	end))
-
-	commands:registerAsync(COMMAND_OBJECT)
-
-	return cleanup
-end
+	end,
+}
