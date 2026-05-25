@@ -1,14 +1,10 @@
 local builders = require("../../../luau_packages/builders")
 
-local discordBot = require("../../objects/discordBot")
 local logger = require("../../objects/logger")
-
-local commands = require("../../singletons/commands")
 local logSink = require("../../singletons/logSink")
 
-local binder = require("../../utilities/binder")
-local handleInteraction = require("../../utilities/handleInteraction")
 local logBlock = require("../../utilities/logBlock")
+local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
 
 local function parseAfter(input: string): number?
@@ -92,71 +88,64 @@ local COMMAND_OBJECT = builders.interaction.interaction
 	)
 	:build()
 
-return function()
-	local addToBinder, cleanup = binder()
+return {
+	command = COMMAND_OBJECT,
+	category = "Developer",
+	cooldown = { { seconds = 10, per = "user" } },
+	guards = { permissionGuard({ "developer" }) },
 
-	addToBinder(discordBot.onCommandInteraction:listen(function(interaction)
-		if interaction.data.name ~= "logs" then
+	execute = function(interaction)
+		local options = interaction.data.options or {}
+		local level: string? = nil
+		local after: number? = nil
+		local afterRaw: string? = nil
+		local count: number? = nil
+
+		for _, option in options do
+			if option.name == "level" then
+				level = option.value
+			elseif option.name == "after" then
+				afterRaw = option.value
+				after = parseAfter(option.value)
+
+				if not after then
+					logger:warn(`Received /logs with invalid time format: '{option.value}'`)
+
+					interaction
+						:messageAsync(
+							respondCommand(
+								`Invalid time format \`{option.value}\`. Use \`HH:MM\`, \`HH:MM:SS\`, or \`HH:MM:SS.mmm\`.`,
+								true
+							)
+						)
+						:poll()
+
+					return
+				end
+			elseif option.name == "count" then
+				count = option.value
+			end
+		end
+
+		local messages = logSink:query({ level = level, after = after, count = count })
+
+		if #messages == 0 then
+			interaction:messageAsync(respondCommand("No logs matched the given filters.", true)):poll()
+
 			return
 		end
 
-		handleInteraction(interaction, { "developer" }, function()
-			local options = interaction.data.options or {}
+		local block = logBlock({ level = level, after = after, count = count }, 1900)
+		local header = `Showing **{#messages}** line{#messages ~= 1 and "s" or ""}`
 
-			local level: string? = nil
-			local after: number? = nil
-			local afterRaw: string? = nil
-			local count: number? = nil
+		if level then
+			header ..= ` · Level ≥ **{level}**`
+		end
 
-			for _, option in options do
-				if option.name == "level" then
-					level = option.value
-				elseif option.name == "after" then
-					afterRaw = option.value
-					after = parseAfter(option.value)
+		if afterRaw then
+			header ..= ` · After **{afterRaw}**`
+		end
 
-					if not after then
-						logger:warn(`Received /logs with invalid time format: '{option.value}'`)
-
-						interaction
-							:messageAsync(
-								respondCommand(
-									`Invalid time format \`{option.value}\`. Use \`HH:MM\`, \`HH:MM:SS\`, or \`HH:MM:SS.mmm\`.`
-								)
-							)
-							:poll()
-
-						return
-					end
-				elseif option.name == "count" then
-					count = option.value
-				end
-			end
-
-			local messages = logSink:query({ level = level, after = after, count = count })
-
-			if #messages == 0 then
-				interaction:messageAsync(respondCommand("No logs matched the given filters.")):poll()
-
-				return
-			end
-
-			local block = logBlock({ level = level, after = after, count = count }, 1900)
-			local header = `Showing **{#messages}** line{#messages ~= 1 and "s" or ""}`
-
-			if level then
-				header ..= ` · Level ≥ **{level}**`
-			end
-
-			if afterRaw then
-				header ..= ` · After **{afterRaw}**`
-			end
-
-			interaction:messageAsync(respondCommand(header .. "\n" .. block)):poll()
-		end)
-	end))
-
-	commands:registerAsync(COMMAND_OBJECT)
-
-	return cleanup
-end
+		interaction:messageAsync(respondCommand(header .. "\n" .. block)):poll()
+	end,
+}
