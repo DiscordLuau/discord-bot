@@ -1,6 +1,0 @@
-return {
-	commandCleanupFns = {},
-	commandPathsLoaded = {},
-
-	commandObjects = {},
-}
