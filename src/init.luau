@@ -1,12 +1,13 @@
 local bot = require("@self/objects/discordBot")
+local commands = require("@self/objects/commands")
 local logger = require("@self/objects/logger")
 
+local config = require("@self/config")
 local lifecycle = require("@self/utilities/lifecycle")
 
 local SINGLETONS = {
 	require("@self/singletons/logSink"),
 	require("@self/singletons/database"),
-	require("@self/singletons/commands"),
 	require("@self/singletons/connectionStats"),
 	require("@self/singletons/statsCollector"),
 	require("@self/singletons/presence"),
@@ -22,6 +23,18 @@ bot.onAllShardsReady:listenOnce(function()
 	logger:info("All shards ready - running onReady lifecycle")
 
 	lifecycle(SINGLETONS, "onReady")
+
+	logger:info("Loading commands")
+	commands:load("src/commands")
+	logger:info("Registering commands with Discord")
+
+	local registerResult = commands:registerGuildAsync(config.guildId):await()
+
+	if registerResult:isErr() then
+		logger:warn(`Command registration failed: {registerResult:unwrapErr()}`)
+	else
+		logger:info("Commands registered successfully")
+	end
 
 	logger:info("onReady lifecycle complete")
 end)
