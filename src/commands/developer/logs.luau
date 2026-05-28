@@ -101,6 +101,8 @@ return {
 		local afterRaw: string? = nil
 		local count: number? = nil
 
+		interaction:deferAsync():poll()
+
 		for _, option in options do
 			if option.name == "level" then
 				level = option.value
