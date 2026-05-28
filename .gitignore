@@ -4,3 +4,6 @@
 # Dependency directories
 luau_packages/
 lune_packages/
+
+# Database
+bot.db
