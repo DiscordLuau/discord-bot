@@ -5,13 +5,13 @@ local discordBot = require("../objects/discordBot")
 local logger = require("../objects/logger")
 
 local WELCOME_MESSAGES = {
-	`Hey <@{0}>, welcome to the server! Glad you're here 🎉`,
-	`<@{0}> just joined - everyone say hi! 👋`,
-	`Welcome, <@{0}>! Hope you enjoy your stay 😄`,
-	`A wild <@{0}> appeared! Welcome! ✨`,
-	`<@{0}> has entered the chat. Welcome aboard! 🚀`,
-	`Great to have you, <@{0}>! Welcome to the server 🙌`,
-	`<@{0}> just landed. Welcome! 🛬`,
+	"Hey <@%s>, welcome to the server! Glad you're here 🎉",
+	"<@%s> just joined - everyone say hi! 👋",
+	"Welcome, <@%s>! Hope you enjoy your stay 😄",
+	"A wild <@%s> appeared! Welcome! ✨",
+	"<@%s> has entered the chat. Welcome aboard! 🚀",
+	"Great to have you, <@%s>! Welcome to the server 🙌",
+	"<@%s> just landed. Welcome! 🛬",
 }
 
 local Welcomer = {}
