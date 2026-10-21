@@ -9,7 +9,7 @@ local guidelines = require("../../utilities/guidelines")
 local permissionGuard = require("../../utilities/permissionGuard")
 local respondCommand = require("../../utilities/respondCommand")
 
-local IS_COMPONENTS_V2 = 32768
+local IS_COMPONENTS_V2 = "32768"
 
 local function touchLastUpdated()
 	database:setConfig("guidelines_last_updated", tostring(os.time()))
