@@ -1,9 +1,21 @@
 local logger = require("../objects/logger")
 
+local DATA_DIRECTORY = "data"
+
+if zune.fs.stat(DATA_DIRECTORY).kind == "none" then
+	zune.fs.makeDir(DATA_DIRECTORY, true)
+end
+
+local database = zune.sqlite.open(`{DATA_DIRECTORY}/bot.db`)
+local journalMode = database:query("PRAGMA journal_mode = WAL"):get()
+
+database:exec("PRAGMA synchronous = NORMAL")
+
 local DataBase = {}
 
 DataBase.Priority = 1
-DataBase.db = zune.sqlite.open("bot.db")
+DataBase.db = database
+DataBase.JournalMode = if journalMode then tostring(journalMode.journal_mode) else "unknown"
 
 function DataBase:query(sql: string)
 	return self.db:query(sql)
@@ -82,7 +94,11 @@ function DataBase:onReady()
 	self.db:exec(`DELETE FROM logs WHERE time < {os.time() - 30 * 86400}`)
 	self.db:exec(`DELETE FROM process_snapshots WHERE time < {os.time() - 86400}`)
 
-	logger:info("Database ready")
+	if self.JournalMode ~= "wal" then
+		logger:warn(`Database journal mode is {self.JournalMode}, not wal; every write stalls the bot`)
+	end
+
+	logger:info(`Database ready (journal mode {self.JournalMode})`)
 end
 
 export type DataBase = typeof(DataBase)
