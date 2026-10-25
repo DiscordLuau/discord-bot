@@ -13,7 +13,7 @@ function guidelines.getAll(): { Guideline }
 end
 
 function guidelines.get(id: number): Guideline?
-	return database:query(`SELECT id, text, hidden FROM guidelines WHERE id = {id}`):get() :: any
+	return database:queryRow(`SELECT id, text, hidden FROM guidelines WHERE id = {id}`) :: any
 end
 
 function guidelines.create(text: string): number
