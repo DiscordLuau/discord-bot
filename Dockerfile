@@ -59,10 +59,10 @@ RUN printf 'local _ = require("./luau_packages/discord")\nrequire("./luau_packag
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# bot.db lives at /app/bot.db - mount a volume here to persist it across restarts
-# docker run: -v ./bot.db:/app/bot.db
+# bot.db and its write-ahead log files live in /app/data - mount a folder here to persist them across restarts
+# docker run: -v ./data:/app/data
 # docker compose: see the volumes section below
-VOLUME ["/app/bot.db"]
+VOLUME ["/app/data"]
 
 # Pass your bot token via: -e DISCORD_BOT_TOKEN=your_token
 ENTRYPOINT ["docker-entrypoint.sh"]

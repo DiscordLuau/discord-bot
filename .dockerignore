@@ -3,6 +3,7 @@ luau_packages/
 lune_packages/
 .env.luau
 bot.db
+data/
 .claude/
 .vscode/
 *.md
