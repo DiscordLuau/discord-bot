@@ -22,6 +22,19 @@ RUN curl -fsSL "https://github.com/pesde-pkg/pesde/releases/download/v0.7.4%2Bre
     && chmod +x /usr/local/bin/pesde \
     && rm /tmp/pesde.zip
 
+# Install yt-dlp and deno (yt-dlp solves YouTube's JavaScript challenges with deno on PATH), each checked by sha256
+RUN curl -fsSL "https://github.com/yt-dlp/yt-dlp/releases/download/2026.10.21/yt-dlp_linux" \
+    -o /usr/local/bin/yt-dlp \
+    && echo "d8bd33fca9d5b23bd5b9952b3fca36db5c46331933fda9f598a3da14ce2c243f  /usr/local/bin/yt-dlp" | sha256sum -c - \
+    && chmod +x /usr/local/bin/yt-dlp
+
+RUN curl -fsSL "https://github.com/denoland/deno/releases/download/v2.9.8/deno-x86_64-unknown-linux-gnu.zip" \
+    -o /tmp/deno.zip \
+    && echo "e890975bc2549807bbcc0b584ffafda72cc7c93349dd99c80483dd784f6c4609  /tmp/deno.zip" | sha256sum -c - \
+    && unzip -j /tmp/deno.zip "deno" -d /usr/local/bin \
+    && chmod +x /usr/local/bin/deno \
+    && rm /tmp/deno.zip
+
 RUN zune setup
 
 RUN git config --global user.email "docker@build" && \
@@ -36,10 +49,10 @@ COPY pesde.toml pesde.lock ./
 COPY src/ ./src/
 RUN pesde install
 
-# discord-luau loads its voice libraries (libdave, libopus, libsodium) when it is first required, downloading
-# them into /root/.cache. Doing that here bakes them into the image, so the bot starts without reaching GitHub
-# and a failed download or checksum stops the build instead of the bot.
-RUN printf 'local _ = require("./luau_packages/discord")\n' > preload.luau \
+# discord-luau loads its voice libraries (libdave, libopus, libsodium) when it is first required, and audio loads
+# libsymphonia on first use, downloading them into /root/.cache. Doing that here bakes them into the image, so the
+# bot starts without reaching GitHub and a failed download or checksum stops the build instead of the bot.
+RUN printf 'local _ = require("./luau_packages/discord")\nrequire("./luau_packages/audio").loadFileDecoder()\n' > preload.luau \
     && zune run preload.luau \
     && rm preload.luau
 

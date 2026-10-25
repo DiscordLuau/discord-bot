@@ -45,4 +45,11 @@ config.wordReactions = {
 	{ pattern = "fr", emoji = "🏴󠁧󠁢󠁳󠁣󠁴󠁿" },
 }
 
+config.music = {
+	cookiesPath = zune.process.env.YOUTUBE_COOKIES_PATH,
+	ytDlpPath = "yt-dlp",
+	idleLeaveSeconds = 120,
+	queuePageSize = 10,
+}
+
 return config

@@ -9,6 +9,7 @@ local DISCORD_BOT_INTENTS = builders.intents
 		"GuildMembers",
 		"GuildMessages",
 		"MessageContent",
+		"GuildVoiceStates",
 	})
 	:build()
 
