@@ -14,7 +14,7 @@ function autoresponses.getAll(): { Autoresponse }
 end
 
 function autoresponses.exists(id: number): boolean
-	return database:query(`SELECT 1 FROM autoresponses WHERE id = {id}`):get() ~= nil
+	return database:queryRow(`SELECT 1 FROM autoresponses WHERE id = {id}`) ~= nil
 end
 
 function autoresponses.create(keyphrases: { string }, content: string, reply: boolean): number

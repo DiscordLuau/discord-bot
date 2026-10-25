@@ -7,9 +7,11 @@ if zune.fs.stat(DATA_DIRECTORY).kind == "none" then
 end
 
 local database = zune.sqlite.open(`{DATA_DIRECTORY}/bot.db`)
-local journalMode = database:query("PRAGMA journal_mode = WAL"):get()
 
+database:exec("PRAGMA journal_mode = WAL")
 database:exec("PRAGMA synchronous = NORMAL")
+
+local journalMode = database:query("PRAGMA journal_mode"):all()[1]
 
 local DataBase = {}
 
@@ -21,6 +23,15 @@ function DataBase:query(sql: string)
 	return self.db:query(sql)
 end
 
+function DataBase:queryRow(sql: string): { [string]: any }?
+	local statement = self.db:query(sql)
+	local row = statement:get()
+
+	statement:finalize()
+
+	return row
+end
+
 function DataBase:exec(sql: string, args: { [string]: any }?)
 	return self.db:exec(sql, args)
 end
@@ -30,7 +41,7 @@ function DataBase:escape(text: string): string
 end
 
 function DataBase:getConfig(key: string): string
-	local row = self.db:query(`SELECT value FROM config WHERE key = '{self:escape(key)}'`):get()
+	local row = self:queryRow(`SELECT value FROM config WHERE key = '{self:escape(key)}'`)
 
 	return if row then row.value :: string else ""
 end

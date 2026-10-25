@@ -12,11 +12,11 @@ function tags.getAll(): { Tag }
 end
 
 function tags.get(name: string): Tag?
-	return database:query(`SELECT name, content FROM tags WHERE name = '{database:escape(name)}'`):get() :: any
+	return database:queryRow(`SELECT name, content FROM tags WHERE name = '{database:escape(name)}'`) :: any
 end
 
 function tags.exists(name: string): boolean
-	return database:query(`SELECT 1 FROM tags WHERE name = '{database:escape(name)}'`):get() ~= nil
+	return database:queryRow(`SELECT 1 FROM tags WHERE name = '{database:escape(name)}'`) ~= nil
 end
 
 function tags.create(name: string, content: string)
