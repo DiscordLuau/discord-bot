@@ -15,6 +15,7 @@ builders = { name = "discord_luau/builders", version = "0.0.4" }
 logger = { name = "discord_luau/logger", version = "0.0.4" }
 classes = { name = "discord_luau/classes", version = "0.0.7" }
 commands = { name = "discord_luau/commands", version = "0.0.4" }
+audio = { name = "discord_luau/audio", version = "0.0.3" }
 emitter = { name = "discord_luau/emitter", version = "0.0.4" }
 
 [patches]
